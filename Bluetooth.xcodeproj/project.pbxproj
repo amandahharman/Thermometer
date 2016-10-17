@@ -13,6 +13,7 @@
 		E0089FA81DAE9FB2008243F4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0089FA61DAE9FB2008243F4 /* Main.storyboard */; };
 		E0089FAA1DAE9FB2008243F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E0089FA91DAE9FB2008243F4 /* Assets.xcassets */; };
 		E0089FAD1DAE9FB2008243F4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E0089FAB1DAE9FB2008243F4 /* LaunchScreen.storyboard */; };
+		E04F34501DB53DE000428A0E /* BluetoothManager.m in Sources */ = {isa = PBXBuildFile; fileRef = E04F344F1DB53DE000428A0E /* BluetoothManager.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,8 @@
 		E0089FA91DAE9FB2008243F4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E0089FAC1DAE9FB2008243F4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E0089FAE1DAE9FB2008243F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E04F344E1DB53DE000428A0E /* BluetoothManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BluetoothManager.h; sourceTree = "<group>"; };
+		E04F344F1DB53DE000428A0E /* BluetoothManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BluetoothManager.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +65,8 @@
 				E0089FA11DAE9FB1008243F4 /* AppDelegate.m */,
 				E0089FA31DAE9FB1008243F4 /* ViewController.h */,
 				E0089FA41DAE9FB1008243F4 /* ViewController.m */,
+				E04F344E1DB53DE000428A0E /* BluetoothManager.h */,
+				E04F344F1DB53DE000428A0E /* BluetoothManager.m */,
 				E0089FA61DAE9FB2008243F4 /* Main.storyboard */,
 				E0089FA91DAE9FB2008243F4 /* Assets.xcassets */,
 				E0089FAB1DAE9FB2008243F4 /* LaunchScreen.storyboard */,
@@ -153,6 +158,7 @@
 			files = (
 				E0089FA51DAE9FB1008243F4 /* ViewController.m in Sources */,
 				E0089FA21DAE9FB1008243F4 /* AppDelegate.m in Sources */,
+				E04F34501DB53DE000428A0E /* BluetoothManager.m in Sources */,
 				E0089F9F1DAE9FB1008243F4 /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,6 +318,7 @@
 				E0089FB31DAE9FB2008243F4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
