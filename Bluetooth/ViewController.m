@@ -26,6 +26,8 @@
     bluetoothManager.delegate = self;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showConnection:) name:THERMOMETER_CONNECT_NOTIFICATION_NAME object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTemperatureLabel:) name:THERMOMETER_RECEIVED_TEMPERATURE object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showDisconnection) name:@"Peripheral disconnected" object:nil];
+
 }
 
 -(void) viewDidAppear:(BOOL)animated{
@@ -53,9 +55,7 @@
     }
     else if([connectionButton.currentTitle isEqual:@"Forget Connection"]){
         [bluetoothManager.centralManager cancelPeripheralConnection:bluetoothManager.thermometerPeripheral];
-        connectionStatusLabel.text = @"Not Connected to a Device";
-        [connectionButton setTitle:@"Connect Device" forState:UIControlStateNormal];
-        [self.navigationItem setPrompt:@"Add a Bluetooth supported themometer to get started!"];
+        [self showDisconnection];
 
     }
 }
@@ -100,5 +100,13 @@
             self.statusImage.image = [UIImage imageNamed:@"yes"];
         }
 }
+
+-(void)showDisconnection{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        connectionStatusLabel.text = @"Not Connected to a Device";
+        [connectionButton setTitle:@"Connect Device" forState:UIControlStateNormal];
+        [self.navigationItem setPrompt:@"Add a Bluetooth supported themometer to get started!"];
+    });
+};
 
 @end
