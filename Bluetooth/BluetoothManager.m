@@ -36,8 +36,9 @@
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     [peripheral setDelegate:self];
     [peripheral discoverServices:nil];
-
-    [self.delegate showConnection:peripheral.state == CBPeripheralStateConnected withName:peripheral.name];
+    NSNotification *notification = [[NSNotification alloc] initWithName:THERMOMETER_CONNECT_NOTIFICATION_NAME object:nil userInfo: @{@"connected": @(peripheral.state == CBPeripheralStateConnected), @"name": peripheral.name}];
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
+//    [self.delegate showConnection:peripheral.state == CBPeripheralStateConnected withName:peripheral.name];
 }
 
 -(void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI{
@@ -58,6 +59,8 @@
         case CBManagerStatePoweredOn:
         NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
         break;
+        case CBManagerStateResetting:
+            NSLog(@"");
         default:
         NSLog(@"CoreBluetooth BLE is not on or ready.");
         break;
@@ -108,7 +111,17 @@
 
 #pragma mark - CBCharacteristic helpers
 -(void)getIntermediateTempReading:(CBCharacteristic *)characteristic error:(NSError *)error{
-    //    NSData *data = characteristic.value;
+    NSData *data = characteristic.value;
+    Byte *bytes = (Byte*)data.bytes;
+    UInt32 integer = 0;
+    integer |= (UInt32)(bytes[1]);
+    integer |= (UInt32)(bytes[2]) << 8;
+    integer |= (UInt32)(bytes[3]) << 16;
+    integer |= (UInt32)(bytes[4]) << 24;
+    float temperature = *(float *)(&integer);
+    NSNotification *notification = [[NSNotification alloc] initWithName:THERMOMETER_RECEIVED_TEMPERATURE object:nil userInfo: @{@"temperature": @(temperature), @"finalReading": @"NO"}];
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
+
     
 }
 -(void)getFinalTempReading:(CBCharacteristic *)characteristic error:(NSError *)error{
@@ -120,7 +133,10 @@
     integer |= (UInt32)(bytes[3]) << 16;
     integer |= (UInt32)(bytes[4]) << 24;
     float temperature = *(float *)(&integer);
-    [self.delegate updateLabelWithTemperature: temperature];
+    NSNotification *notification = [[NSNotification alloc] initWithName:THERMOMETER_RECEIVED_TEMPERATURE object:nil userInfo: @{@"temperature": @(temperature), @"finalReading": @"YES"}];
+    [[NSNotificationCenter defaultCenter] postNotification:notification];
+
+//    [self.delegate updateLabelWithTemperature: temperature];
 }
 
 

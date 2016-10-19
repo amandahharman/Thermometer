@@ -14,6 +14,8 @@
 
 #define THERMOMETER_MEASUREMENT_CHARACTERISTIC_UUID @"2A1C"
 #define THERMOMETER_INTERMEDIATE_TEMP_CHARACTERISTIC_UUID @"2A1E"
+#define THERMOMETER_CONNECT_NOTIFICATION_NAME @"thermometerConnected"
+#define THERMOMETER_RECEIVED_TEMPERATURE @"thermometerReceivedTemperature"
 
 @protocol BluetoothManagerDelegate <NSObject>
 

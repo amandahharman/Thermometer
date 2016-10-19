@@ -24,7 +24,8 @@
     [self.deviceInfo setUserInteractionEnabled:NO];
     bluetoothManager = [BluetoothManager sharedManager];
     bluetoothManager.delegate = self;
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showConnection:) name:THERMOMETER_CONNECT_NOTIFICATION_NAME object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTemperatureLabel:) name:THERMOMETER_RECEIVED_TEMPERATURE object:nil];
 }
 
 -(void) viewDidAppear:(BOOL)animated{
@@ -72,7 +73,30 @@
 
 
 
+#pragma mark - Update View With Notification
+-(void)showConnection:(NSNotification *)notification{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSDictionary *infoDict = notification.userInfo;
+        BOOL connected = [infoDict objectForKey:@"connected"];
+        NSString *peripheralName = [infoDict objectForKey:@"name"];
+        self.connected = [NSString stringWithFormat:@"Connected: %@", connected ? @"YES" : @"NO"];
+        NSLog(@"%@", self.connected);
+        connectionStatusLabel.text = [NSString stringWithFormat:@"Connected to %@", peripheralName];
+        [connectionButton setEnabled:FALSE];
+        [self.navigationItem setPrompt:nil];
+    });
+};
 
-
+-(void)updateTemperatureLabel: (NSNotification *)notification{
+    NSDictionary *infoDict = notification.userInfo;
+    NSNumber *temperature = [infoDict objectForKey:@"temperature"];
+    NSString *finalReading = [infoDict objectForKey: @"finalReading"];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        self.tempLabel.text = [NSString stringWithFormat:@"%.2f", [temperature floatValue]];
+        if([finalReading isEqualToString:@"YES"]){
+            self.statusImage.image = [UIImage imageNamed:@"yes"];
+        }
+    });
+}
 
 @end
