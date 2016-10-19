@@ -7,21 +7,13 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <CoreBluetooth/CoreBluetooth.h>
-#import <QuartzCore/QuartzCore.h>
+#import "BluetoothManager.h"
 
-#define THERMOMETER_SERVICE_UUID @"0x1809"
 
-#define THERMOMETER_MEASUREMENT_CHARACTERISTIC_UUID @"2A1C"
-#define THERMOMETER_INTERMEDIATE_TEMP_CHARACTERISTIC_UUID @"2A1E"
+@interface ViewController : UIViewController
 
-@interface ViewController : UIViewController <CBCentralManagerDelegate, CBPeripheralDelegate>
-
-@property (nonatomic, strong) CBCentralManager *centralManager;
-@property (nonatomic, strong) CBPeripheral *thermometerPeripheral;
-
+@property (nonatomic, strong) BluetoothManager *bluetoothManager;
 @property (nonatomic, strong) NSString *connected;
-@property (readonly) float temperature;
 @property (weak, nonatomic) IBOutlet UILabel *tempLabel;
 @property (weak, nonatomic) IBOutlet UITextView *deviceInfo;
 @property (weak, nonatomic) IBOutlet UIImageView *statusImage;
@@ -29,8 +21,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *connectionStatusLabel;
 
 - (IBAction)connectDeviceButtonPressed:(UIButton *)sender;
--(void)getIntermediateTempReading:(CBCharacteristic *)characteristic error:(NSError *)error;
--(void)getFinalTempReading:(CBCharacteristic *)characteristic error:(NSError *)error;
 
 @end
 
