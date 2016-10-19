@@ -19,8 +19,6 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedBluetoothManager = [[BluetoothManager alloc] init];
-       
-
     });
     return sharedBluetoothManager;
 };
@@ -36,9 +34,11 @@
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
     [peripheral setDelegate:self];
     [peripheral discoverServices:nil];
-    NSNotification *notification = [[NSNotification alloc] initWithName:THERMOMETER_CONNECT_NOTIFICATION_NAME object:nil userInfo: @{@"connected": @(peripheral.state == CBPeripheralStateConnected), @"name": peripheral.name}];
-    [[NSNotificationCenter defaultCenter] postNotification:notification];
-//    [self.delegate showConnection:peripheral.state == CBPeripheralStateConnected withName:peripheral.name];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:THERMOMETER_CONNECT_NOTIFICATION_NAME object:nil userInfo: @{@"connected": @(peripheral.state == CBPeripheralStateConnected), @"name": peripheral.name} ];
+        //    [self.delegate showConnection:peripheral.state == CBPeripheralStateConnected withName:peripheral.name];
+        
+    });
 }
 
 -(void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI{
@@ -57,13 +57,11 @@
     // Determine the state of the peripheral
     switch([central state]){
         case CBManagerStatePoweredOn:
-        NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
-        break;
-        case CBManagerStateResetting:
-            NSLog(@"");
+            NSLog(@"CoreBluetooth BLE hardware is powered on and ready");
+            break;
         default:
-        NSLog(@"CoreBluetooth BLE is not on or ready.");
-        break;
+            NSLog(@"CoreBluetooth BLE is not on or ready.");
+            break;
     }
     
     
@@ -108,35 +106,33 @@
     }
 }
 
-
 #pragma mark - CBCharacteristic helpers
 -(void)getIntermediateTempReading:(CBCharacteristic *)characteristic error:(NSError *)error{
     NSData *data = characteristic.value;
-    Byte *bytes = (Byte*)data.bytes;
-    UInt32 integer = 0;
-    integer |= (UInt32)(bytes[1]);
-    integer |= (UInt32)(bytes[2]) << 8;
-    integer |= (UInt32)(bytes[3]) << 16;
-    integer |= (UInt32)(bytes[4]) << 24;
-    float temperature = *(float *)(&integer);
-    NSNotification *notification = [[NSNotification alloc] initWithName:THERMOMETER_RECEIVED_TEMPERATURE object:nil userInfo: @{@"temperature": @(temperature), @"finalReading": @"NO"}];
-    [[NSNotificationCenter defaultCenter] postNotification:notification];
-
-    
+    float temperature = [self convertToFloatFromData:data];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:THERMOMETER_RECEIVED_TEMPERATURE object:nil userInfo: @{@"temperature": @(temperature), @"finalReading": @"NO"}];
+    });
+    //    [self.delegate updateLabelWithTemperature: temperature];
 }
+
 -(void)getFinalTempReading:(CBCharacteristic *)characteristic error:(NSError *)error{
     NSData *data = characteristic.value;
+    float temperature = [self convertToFloatFromData:data];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:THERMOMETER_RECEIVED_TEMPERATURE object:nil userInfo: @{@"temperature": @(temperature), @"finalReading": @"YES"} ];
+        //    [self.delegate updateLabelWithTemperature: temperature];
+    });
+}
+
+-(float)convertToFloatFromData: (NSData *)data {
     Byte *bytes = (Byte*)data.bytes;
     UInt32 integer = 0;
     integer |= (UInt32)(bytes[1]);
     integer |= (UInt32)(bytes[2]) << 8;
     integer |= (UInt32)(bytes[3]) << 16;
     integer |= (UInt32)(bytes[4]) << 24;
-    float temperature = *(float *)(&integer);
-    NSNotification *notification = [[NSNotification alloc] initWithName:THERMOMETER_RECEIVED_TEMPERATURE object:nil userInfo: @{@"temperature": @(temperature), @"finalReading": @"YES"}];
-    [[NSNotificationCenter defaultCenter] postNotification:notification];
-
-//    [self.delegate updateLabelWithTemperature: temperature];
+    return  *(float *)(&integer);
 }
 
 

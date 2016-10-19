@@ -11,7 +11,6 @@
 #import <QuartzCore/QuartzCore.h>
 
 #define THERMOMETER_SERVICE_UUID @"0x1809"
-
 #define THERMOMETER_MEASUREMENT_CHARACTERISTIC_UUID @"2A1C"
 #define THERMOMETER_INTERMEDIATE_TEMP_CHARACTERISTIC_UUID @"2A1E"
 #define THERMOMETER_CONNECT_NOTIFICATION_NAME @"thermometerConnected"
@@ -34,5 +33,6 @@
 
 -(void)getIntermediateTempReading:(CBCharacteristic *)characteristic error:(NSError *)error;
 -(void)getFinalTempReading:(CBCharacteristic *)characteristic error:(NSError *)error;
+-(float)convertToFloatFromData: (NSData *)data;
 
 @end

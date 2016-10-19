@@ -33,7 +33,6 @@
     [self showOrHideNavPrompt];
 }
 
-//Modified from ReyWenderlich tutorial
 - (void)showOrHideNavPrompt
 {
     double delayInSeconds = 1.0;
@@ -53,22 +52,19 @@
     
 }
 
-#pragma mark - UpdateView
+#pragma mark - Update View With Delegate
 -(void)showConnection:(BOOL)connected withName:(NSString *)peripheralName{
-    dispatch_async(dispatch_get_main_queue(), ^{
         self.connected = [NSString stringWithFormat:@"Connected: %@", connected ? @"YES" : @"NO"];
         NSLog(@"%@", self.connected);
         connectionStatusLabel.text = [NSString stringWithFormat:@"Connected to %@", peripheralName];
         [connectionButton setEnabled:FALSE];
         [self.navigationItem setPrompt:nil];
-    });
 };
 
 -(void)updateLabelWithTemperature: (float)temperature{
-    dispatch_async(dispatch_get_main_queue(), ^{
         self.tempLabel.text = [NSString stringWithFormat:@"%2f",temperature];
         self.statusImage.image = [UIImage imageNamed:@"yes"];
-    });
+
 }
 
 
@@ -91,12 +87,10 @@
     NSDictionary *infoDict = notification.userInfo;
     NSNumber *temperature = [infoDict objectForKey:@"temperature"];
     NSString *finalReading = [infoDict objectForKey: @"finalReading"];
-    dispatch_async(dispatch_get_main_queue(), ^{
         self.tempLabel.text = [NSString stringWithFormat:@"%.2f", [temperature floatValue]];
         if([finalReading isEqualToString:@"YES"]){
             self.statusImage.image = [UIImage imageNamed:@"yes"];
         }
-    });
 }
 
 @end
