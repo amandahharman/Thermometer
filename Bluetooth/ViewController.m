@@ -26,6 +26,8 @@
     bluetoothManager.delegate = self;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showConnection:) name:THERMOMETER_CONNECT_NOTIFICATION_NAME object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateTemperatureLabel:) name:THERMOMETER_RECEIVED_TEMPERATURE object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showDisconnection) name:@"Peripheral disconnected" object:nil];
+
 }
 
 -(void) viewDidAppear:(BOOL)animated{
@@ -48,8 +50,14 @@
 
 #pragma mark - User Actions
 - (IBAction)connectDeviceButtonPressed:(UIButton *)sender {
+    if([connectionButton.currentTitle isEqual:@"Connect Device"]){
     [bluetoothManager.centralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString:THERMOMETER_SERVICE_UUID]] options:nil];
-    
+    }
+    else if([connectionButton.currentTitle isEqual:@"Forget Connection"]){
+        [bluetoothManager.centralManager cancelPeripheralConnection:bluetoothManager.thermometerPeripheral];
+        [self showDisconnection];
+
+    }
 }
 
 #pragma mark - Update View With Delegate
@@ -78,7 +86,7 @@
         self.connected = [NSString stringWithFormat:@"Connected: %@", connected ? @"YES" : @"NO"];
         NSLog(@"%@", self.connected);
         connectionStatusLabel.text = [NSString stringWithFormat:@"Connected to %@", peripheralName];
-        [connectionButton setEnabled:FALSE];
+        [connectionButton setTitle:@"Forget Connection" forState:UIControlStateNormal];
         [self.navigationItem setPrompt:nil];
     });
 };
@@ -92,5 +100,13 @@
             self.statusImage.image = [UIImage imageNamed:@"yes"];
         }
 }
+
+-(void)showDisconnection{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        connectionStatusLabel.text = @"Not Connected to a Device";
+        [connectionButton setTitle:@"Connect Device" forState:UIControlStateNormal];
+        [self.navigationItem setPrompt:@"Add a Bluetooth supported themometer to get started!"];
+    });
+};
 
 @end

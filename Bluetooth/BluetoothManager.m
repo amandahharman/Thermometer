@@ -41,6 +41,14 @@
     });
 }
 
+-(void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"Peripheral disconnected" object:nil ];
+    });
+
+
+}
+
 -(void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary<NSString *,id> *)advertisementData RSSI:(NSNumber *)RSSI{
     NSString *localName = [advertisementData objectForKey:CBAdvertisementDataLocalNameKey];
     if ([localName length] > 0){
