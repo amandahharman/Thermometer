@@ -48,8 +48,16 @@
 
 #pragma mark - User Actions
 - (IBAction)connectDeviceButtonPressed:(UIButton *)sender {
+    if([connectionButton.currentTitle isEqual:@"Connect Device"]){
     [bluetoothManager.centralManager scanForPeripheralsWithServices:@[[CBUUID UUIDWithString:THERMOMETER_SERVICE_UUID]] options:nil];
-    
+    }
+    else if([connectionButton.currentTitle isEqual:@"Forget Connection"]){
+        [bluetoothManager.centralManager cancelPeripheralConnection:bluetoothManager.thermometerPeripheral];
+        connectionStatusLabel.text = @"Not Connected to a Device";
+        [connectionButton setTitle:@"Connect Device" forState:UIControlStateNormal];
+        [self.navigationItem setPrompt:@"Add a Bluetooth supported themometer to get started!"];
+
+    }
 }
 
 #pragma mark - Update View With Delegate
@@ -78,7 +86,7 @@
         self.connected = [NSString stringWithFormat:@"Connected: %@", connected ? @"YES" : @"NO"];
         NSLog(@"%@", self.connected);
         connectionStatusLabel.text = [NSString stringWithFormat:@"Connected to %@", peripheralName];
-        [connectionButton setEnabled:FALSE];
+        [connectionButton setTitle:@"Forget Connection" forState:UIControlStateNormal];
         [self.navigationItem setPrompt:nil];
     });
 };
